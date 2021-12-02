@@ -1,15 +1,18 @@
-const { app, BrowserWindow, clipboard } = require('electron')
+const { app, BrowserWindow, clipboard, ipcMain } = require('electron')
 const path = require('path')
 
 var lastClipboard = ""
 var pollingInterval = 1000
 var clipboardHistory = []
+var win
 
 const createWindow = () => {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
       preload: path.join(__dirname, 'preload.js')
     }
   })
@@ -29,6 +32,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
 
+ipcMain.on("getAllClips", function(event, data){
+
+})
+
 function polling(){
 
   var thisClipboard = clipboard.readText()
@@ -36,6 +43,7 @@ function polling(){
     console.log(thisClipboard)
     lastClipboard = thisClipboard
     clipboardHistory.push(thisClipboard)
+    win.webContents.send("newClip", thisClipboard)
   }
   setTimeout(polling, pollingInterval)
 }
