@@ -8,7 +8,7 @@ class Clip {
         this.type = "text";
     }
 
-    getHTMLElement(){
+    pushHTML(){
 
         var eList = document.createElement('div')
         var id = this.id;
@@ -32,12 +32,11 @@ class Clip {
         var h = `
 <div id=listcontainer${id} class=listcontainer>
     <span id=samplecontainer${id} class=samplecontainer>
-        <textarea id=sampletext${id} class=sampletext>
-        ${this.data}
+        <textarea id=sampletext${id} class=sampletext>${this.data}
         </textarea>
     </span>
     <span id=menucontainer${id} class='menucontainer'>
-        <div id=btnexpand${id} class='clickable btn expand' onclick="clipperApp.expand(${id});">
+        <div id=btnexpand${id} unsafe-inline class='clickable btn expand'>
             <span class='oi' data-glyph='chevron-bottom' aria-hidden='true'></span>
         </div>
         <div id=btnreclip${id} class='clickable btn reclip' onclick="clipperApp.reclip(${id});">
@@ -54,7 +53,9 @@ class Clip {
         `
 
         eList.innerHTML = h;
-        return eList;
+        document.body.prepend(eList);
+        document.getElementById('btnexpand'+id).onclick = (e)=>{clientApp.expand(id);}
+        return;
     }
 }
 
@@ -91,7 +92,14 @@ class clipperApp {
     insertLatestClip(data){
         var clip = new Clip(this.clipstore.length, data);
         this.clipstore.push(clip);
-        document.body.prepend(clip.getHTMLElement());
+        clip.pushHTML();
+    }
+
+    expand(id){   
+        console.log("expand clicked id: " + id)    
+        document.getElementById('listcontainer' + id).height = 260;
+        document.getElementById('samplecontainer' + id).height = 260;
+   
     }
 }
 
