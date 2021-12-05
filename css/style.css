@@ -17,22 +17,41 @@ body {
     display: inline-block;
     margin-right: 3px;
     width: -webkit-calc(100% - 182px);
+    height: -webkit-fill-available;
 }
 
 .menucontainer {
     display: inline-block;
     width: fit-content;
+    display: inline-block;
+    width: fit-content;
+    height: -webkit-fill-available;
+    margin-top: 3px;
+    vertical-align: top;
 }
 
 .sampletext {
     margin: 3px;
     width: -webkit-fill-available;
+    height: -webkit-fill-available;
     background-color: #333344;
     color: antiquewhite;
     border-style: none;
-    resize: none;
+    resize:vertical;
+}
+.sampletextexpanded {
+    margin: 3px;
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    background-color: #333344;
+    color: antiquewhite;
+    border-style: none;
+    resize:vertical;
 }
 
+.expanded {
+    height: 200px;
+}
 
 .clickable:hover {
     border-color: chartreuse;

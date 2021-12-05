@@ -43,7 +43,10 @@ function polling(){
     console.log(thisClipboard)
     lastClipboard = thisClipboard
     clipboardHistory.push(thisClipboard)
-    win.webContents.send("newClip", thisClipboard)
+    
+    if(thisClipboard.length > 0){
+      win.webContents.send("newClip", thisClipboard)
+    }
   }
   setTimeout(polling, pollingInterval)
 }
