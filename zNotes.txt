@@ -1,0 +1,11 @@
+
+bookmark(id){
+        console.log("bookmark clicked. id: " + id);
+    }
+
+    showMenu(id){
+        console.log("showMenu clicked. id: " + id);
+    }
+
+
+sampletext
