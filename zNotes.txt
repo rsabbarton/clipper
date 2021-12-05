@@ -1,11 +1,1 @@
-
-bookmark(id){
-        console.log("bookmark clicked. id: " + id);
-    }
-
-    showMenu(id){
-        console.log("showMenu clicked. id: " + id);
-    }
-
-
-sampletext
+> clipper@1.0.0 start - INITIALISED
