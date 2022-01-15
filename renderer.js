@@ -1,18 +1,21 @@
-const ipcRenderer = require("electron").ipcRenderer;
-const clipboard = require("electron").clipboard;
+const {remote, ipcRenderer, clipboard, Menu, MenuItem} = require("electron")
+//const clipboard = require("electron").clipboard
+//const remote = require('electron')
+//const {Menu, MenuItem} = remote
+//const MenuItem = remote.MenuItem
 
 class Clip {
     constructor(id, data){
-        this.data = data;
-        this.timestamp = Date.now();
-        this.id = id;
-        this.type = "text";
+        this.data = data
+        this.timestamp = Date.now()
+        this.id = id
+        this.type = "text"
     }
 
     pushHTML(){
 
-        var eList = document.createElement('div');
-        var id = this.id;
+        var eList = document.createElement('div')
+        var id = this.id
 
         var h = `
 <div id=listcontainer${id} class=listcontainer>
@@ -37,7 +40,7 @@ class Clip {
         `
 
         eList.innerHTML = h;
-        document.body.prepend(eList);
+        document.getElementById("pagecontainer").prepend(eList);
         document.getElementById('btnexpand'+id).onclick = (e)=>{clientApp.expand(id);}
         document.getElementById('btnreclip'+id).onclick = (e)=>{clientApp.reclip(id);}
         document.getElementById('btnbookmark'+id).onclick = (e)=>{clientApp.bookmark(id);}
@@ -59,15 +62,27 @@ class clipperApp {
     }
 
     setListeners(){
+        ipcRenderer.on('apploaded', function(){
+            console.log("adding input listener")
+            document.getElementById('searchinput').onkeyup = clientApp.updateFilter
+        })
         ipcRenderer.on('newClip', function(event, data) {
-            // this function never gets called
             clientApp.insertLatestClip(data);
-            console.log(data);
+        });
+        ipcRenderer.on('deleteClips', function(event, data) {
+            clientApp.deleteClip(data);
         });
         ipcRenderer.on('clipRefresh', function(event, data) {
-            // this function never gets called
-            console.log(data);
+            this.clipstore = [];
+            document.getElementById("pagecontainer").innerHTML = ""
+            data.forEach(element => {
+                clientApp.insertLatestClip(element)
+            });    
+            
         });
+
+        ipcRenderer.send("loaded", true);
+        
     }
 
 
@@ -103,7 +118,32 @@ class clipperApp {
 
     showMenu(id){
         console.log("showMenu clicked. id: " + id);
+        ipcRenderer.send("showmenu", this.clipstore[id].data)
+    }
+
+    updateFilter(){
+        console.log("updating filter")
+        var filter = document.getElementById('searchinput').value        
+        var textitems = document.getElementsByClassName('sampletext')
+        for (var i=0; i<textitems.length; i++){           
+            var item = textitems.item(i)
+            if(filter.length > 0){
+                var itemvalue = item.value               
+                if(itemvalue.toLowerCase().includes(filter.toLowerCase())){
+                    item.parentElement.parentElement.style.display = "block"
+                } else {
+                    item.parentElement.parentElement.style.display = "none"
+                }
+            } else {
+                item.parentElement.parentElement.style.display = "block";
+            }
+        }
+    }
+
+    deleteClip(data){
+        //TODO - Add Delete Code
     }
 }
 
 const clientApp = new clipperApp();
+        
