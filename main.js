@@ -12,6 +12,7 @@ var homeDirectory = app.getPath('home')
 var dataPath = path.join(homeDirectory, ".clipper")
 var historyFile = path.join(dataPath, "history.json")
 var customWebToolsFile = path.join(dataPath, "custom-web-tools.json")
+var clippetsFolder = path.join(dataPath, 'clippets')
 
 const maxHistoryLength = 100
 
@@ -20,6 +21,9 @@ console.log(historyFile)
 
 if(!fs.existsSync(dataPath)){
   fs.mkdirSync(dataPath)
+}
+if(!fs.existsSync(clippetsFolder)){
+  fs.mkdirSync(clippetsFolder)
 }
 
 if(fs.existsSync(historyFile)){
@@ -128,6 +132,12 @@ ipcMain.on("loaded", function(event, data){
   setTimeout(polling, pollingInterval)
   win.webContents.send('apploaded', true)
 })
+
+ipcMain.on("createclippet", function(event, data){
+  
+})
+
+
 
 function polling(){
 

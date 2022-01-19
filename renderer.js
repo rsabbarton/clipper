@@ -65,6 +65,8 @@ class clipperApp {
         ipcRenderer.on('apploaded', function(){
             console.log("adding input listener")
             document.getElementById('searchinput').onkeyup = clientApp.updateFilter
+            document.getElementById('cancelbutton').onclick = clientApp.cancelClippet
+            document.getElementById('submitbutton').onclick = clientApp.submitClippet
         })
         ipcRenderer.on('newClip', function(event, data) {
             clientApp.insertLatestClip(data);
@@ -92,7 +94,7 @@ class clipperApp {
 
 
     insertLatestClip(data){
-        var clip = new Clip(this.clipstore.length, data);
+        var clip = new Clip(this.clipstore.length, data)
         this.clipstore.push(clip);
         clip.pushHTML();
     }
@@ -108,16 +110,17 @@ class clipperApp {
     reclip(id){
         console.log("reclip clicked. id: " + id);
         this.clipstore[id].data = document.getElementById('sampletext'+id).value;
-        clipboard.writeText(this.clipstore[id].data);
-        console.log("reclipped: " + this.clipstore[id].data);
+        clipboard.writeText(this.clipstore[id].data)
+        console.log("reclipped: " + this.clipstore[id].data)
     }
 
     bookmark(id){
-        console.log("bookmark clicked. id: " + id);
+        console.log("bookmark clicked. id: " + id)
+        ipcRenderer.send("createclippet", this.clipstore[id].data)
     }
 
     showMenu(id){
-        console.log("showMenu clicked. id: " + id);
+        console.log("showMenu clicked. id: " + id)
         ipcRenderer.send("showmenu", this.clipstore[id].data)
     }
 
@@ -135,9 +138,18 @@ class clipperApp {
                     item.parentElement.parentElement.style.display = "none"
                 }
             } else {
-                item.parentElement.parentElement.style.display = "block";
+                item.parentElement.parentElement.style.display = "block"
             }
         }
+    }
+
+
+    cancelClippet(){
+        //TODO - Add cancel code
+    }
+
+    submitClippet(){
+        //TODO - Add submit code
     }
 
     deleteClip(data){
@@ -145,5 +157,6 @@ class clipperApp {
     }
 }
 
-const clientApp = new clipperApp();
+const clientApp = new clipperApp()
         
+
