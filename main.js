@@ -1,6 +1,7 @@
 const { app, BrowserWindow, clipboard, ipcMain, Menu, MenuItem, shell } = require('electron')
 const path = require('path')
 const fs = require('fs')
+const { exec } = require('child_process')
 
 var lastClipboard = ""
 var pollingInterval = 1000
@@ -86,7 +87,9 @@ ipcMain.on("showmenu", function(event, data){
     menu.append(new MenuItem ({
       label: 'Open With Browser',
       click() { 
-        shell.openExternal(data)
+        //shell.openExternal(data)
+        //shell.openPath(data)
+        exec("chrome " + data)
       }
     }))
   }
