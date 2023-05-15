@@ -1,8 +1,5 @@
 const {remote, ipcRenderer, clipboard, Menu, MenuItem} = require("electron")
-//const clipboard = require("electron").clipboard
-//const remote = require('electron')
-//const {Menu, MenuItem} = remote
-//const MenuItem = remote.MenuItem
+
 
 class Clip {
     constructor(id, data){
@@ -116,7 +113,9 @@ class clipperApp {
 
     bookmark(id){
         console.log("bookmark clicked. id: " + id)
-        ipcRenderer.send("createclippet", this.clipstore[id].data)
+        document.getElementById('clippettext').value = this.clipstore[id].data
+        document.getElementById('clippetcontainer').style.display = "block"
+        window.scrollTo(0,0)
     }
 
     showMenu(id){
@@ -126,14 +125,24 @@ class clipperApp {
 
     updateFilter(){
         console.log("updating filter")
-        var filter = document.getElementById('searchinput').value        
+        var filtertext = document.getElementById('searchinput').value 
+        var filter = filtertext.toLowerCase().split(' ')      
         var textitems = document.getElementsByClassName('sampletext')
         for (var i=0; i<textitems.length; i++){           
             var item = textitems.item(i)
             if(filter.length > 0){
-                var itemvalue = item.value               
-                if(itemvalue.toLowerCase().includes(filter.toLowerCase())){
-                    item.parentElement.parentElement.style.display = "block"
+                var itemvalue = item.value.toLowerCase()              
+                if(itemvalue.includes(filter[0].toLowerCase())){
+                    filter.forEach((f)=>{
+
+                        if(itemvalue.includes(f)){
+                            item.parentElement.parentElement.style.display = "block"
+                        } else {
+                            item.parentElement.parentElement.style.display = "none"
+                        }
+
+                    })
+                    
                 } else {
                     item.parentElement.parentElement.style.display = "none"
                 }
@@ -141,15 +150,25 @@ class clipperApp {
                 item.parentElement.parentElement.style.display = "block"
             }
         }
+        ipcRenderer.send("updateclippetfilter", filter)
     }
 
 
     cancelClippet(){
-        //TODO - Add cancel code
+        document.getElementById('clippetname').value = ""
+        document.getElementById('clippettags').value = ""
+        document.getElementById('clippettext').value = ""
+        document.getElementById('clippetcontainer').style.display = "none"
     }
 
     submitClippet(){
         //TODO - Add submit code
+        var clippet = {}
+        clippet.name = document.getElementById('clippetname').value
+        clippet.tags = document.getElementById('clippettags').value
+        clippet.content = document.getElementById('clippettext').value
+        ipcRenderer.send('saveclippet', clippet)
+        document.getElementById('clippetcontainer').style.display = "none"
     }
 
     deleteClip(data){

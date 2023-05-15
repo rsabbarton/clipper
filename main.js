@@ -7,12 +7,14 @@ var pollingInterval = 1000
 var clipboardHistory = []
 var win
 var historyLoaded = false
+var clippetFilter = []
 
 var homeDirectory = app.getPath('home')
 var dataPath = path.join(homeDirectory, ".clipper")
 var historyFile = path.join(dataPath, "history.json")
 var customWebToolsFile = path.join(dataPath, "custom-web-tools.json")
 var clippetsFolder = path.join(dataPath, 'clippets')
+var clippetsIndexFile = path.join(clippetsFolder, "index.json")
 
 const maxHistoryLength = 100
 
@@ -53,7 +55,8 @@ const createWindow = () => {
 
   win.loadFile('index.html')
   win.webContents.once('dom-ready', ()=>{
-    win.webContents.openDevTools()
+    // Uncomment to auto launch the console
+    // win.webContents.openDevTools()
   })
 }
 
@@ -133,11 +136,30 @@ ipcMain.on("loaded", function(event, data){
   win.webContents.send('apploaded', true)
 })
 
-ipcMain.on("createclippet", function(event, data){
+ipcMain.on("saveclippet", function(event, data){
+  console.log("saving clippet", data)
+
+  var filename = "clip_" + Date.now() + '.json'
+
+  fs.writeFileSync(path.join(clippetsFolder, filename), JSON.stringify(data))
+
   
+  var index = []
+  if(fs.existsSync(clippetsIndexFile)){
+    JSON.parse(fs.readFileSync(clippetsIndexFile))
+  }
+  var newEntry = {}
+  newEntry.filename = filename
+  newEntry.name = data.name
+  newEntry.tags = data.tags
+  index.push(newEntry)
+
+  fs.writeFileSync(clippetsIndexFile, JSON.stringify(index))
 })
 
+ipcMain.on('updateclippetfilter', function(event, filter){
 
+})
 
 function polling(){
 
