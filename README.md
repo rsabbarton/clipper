@@ -3,6 +3,11 @@ Clipboard Manager
 
 ## Installation
 
+### Prerequisites for installing the Clipper Tool
+
+ - git - You must have the git command line tools installed
+ - node/npm - Once cloned you will need to use npm to sync dependencies
+
 ### Mac
 
 1. Open "Terminal" App
@@ -24,3 +29,7 @@ E.G.
 ]
 
 Clip contents will be passed into the %s macro when clicked.
+
+## Modding
+
+It is now possible to add "mods" to the clipper application.  More details coming soon...
