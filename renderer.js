@@ -42,6 +42,7 @@ class Clip {
         document.getElementById('btnreclip'+id).onclick = (e)=>{clientApp.reclip(id);}
         document.getElementById('btnbookmark'+id).onclick = (e)=>{clientApp.bookmark(id);}
         document.getElementById('btnmenu'+id).onclick = (e)=>{clientApp.showMenu(id);}
+        if(this.data.indexOf('\n') > 0 || this.data.length > 80){clientApp.expand(id);}
         return;
     }
 }
