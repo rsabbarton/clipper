@@ -16,6 +16,9 @@ var historyFile = path.join(dataPath, "history.json")
 var customWebToolsFile = path.join(dataPath, "custom-web-tools.json")
 var clippetsFolder = path.join(dataPath, 'clippets')
 var clippetsIndexFile = path.join(clippetsFolder, "index.json")
+var modPath = path.join(dataPath,"mods")
+var tempPath = path.join(dataPath,"temp")
+
 
 const maxHistoryLength = 100
 
@@ -40,6 +43,20 @@ var customWebTools = []
 if(fs.existsSync(customWebToolsFile)){
   customWebTools = JSON.parse(fs.readFileSync(customWebToolsFile))
 }
+
+var mods = []
+var modFolder = fs.readdirSync(modPath)
+modFolder.forEach(modEntry=>{
+  console.log(modEntry)
+  let modDefPath = path.join(modPath,modEntry,"mod-def.json")
+  if(fs.existsSync(modDefPath)){
+    let modDef = JSON.parse(fs.readFileSync(modDefPath))
+    modDef.modDirectory = path.join(modPath, modEntry)
+    mods.push(modDef)
+  }
+})
+
+console.log(mods)
 
 const createWindow = () => {
   win = new BrowserWindow({
@@ -115,6 +132,31 @@ ipcMain.on("showmenu", function(event, data){
         }
       }))
     }
+
+    
+  })
+
+  mods.forEach((mod)=>{
+    let tempFile = path.join(tempPath, Date.now()+".txt")
+    fs.writeFileSync(tempFile, data)
+    let modCommand = mod.interpreter + " " + path.join(mod.modDirectory,mod.scriptName) + " '" + tempFile + "'"
+    console.log(modCommand)
+    menu.append(new MenuItem ({
+      label: mod.displayName,
+      click() {
+        console.log("Executing: ", modCommand)
+        exec(modCommand, (err, stdout, stderr)=>{
+          if (err) {
+            console.error(`exec error: ${err}`);
+            return;
+          }
+          console.log(`stdout: ${stdout}`);
+          console.error(`stderr: ${stderr}`);
+          win.webContents.send("newClip", stdout)
+
+        })
+      }
+    }))
   })
 
   menu.append(new MenuItem({type: 'separator'}))

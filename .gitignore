@@ -104,3 +104,6 @@ dist
 .tern-port
 .DS_Store
 workspace.code-workspace
+
+# Link to mods folder is for local use only
+mods/
