@@ -44,18 +44,20 @@ if(fs.existsSync(customWebToolsFile)){
   customWebTools = JSON.parse(fs.readFileSync(customWebToolsFile))
 }
 
-var mods = []
-var modFolder = fs.readdirSync(modPath)
-modFolder.forEach(modEntry=>{
-  console.log(modEntry)
-  let modDefPath = path.join(modPath,modEntry,"mod-def.json")
-  if(fs.existsSync(modDefPath)){
-    let modDef = JSON.parse(fs.readFileSync(modDefPath))
-    modDef.modDirectory = path.join(modPath, modEntry)
-    mods.push(modDef)
-  }
-})
 
+var mods = []
+if(fs.existsSync(modPath)){
+  var modFolder = fs.readdirSync(modPath)
+  modFolder.forEach(modEntry=>{
+    console.log(modEntry)
+    let modDefPath = path.join(modPath,modEntry,"mod-def.json")
+    if(fs.existsSync(modDefPath)){
+      let modDef = JSON.parse(fs.readFileSync(modDefPath))
+      modDef.modDirectory = path.join(modPath, modEntry)
+      mods.push(modDef)
+    }
+  })
+}
 console.log(mods)
 
 const createWindow = () => {
