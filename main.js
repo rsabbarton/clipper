@@ -210,6 +210,7 @@ ipcMain.on('updateclippetfilter', function(event, filter){
 
 function polling(){
 
+  //console.log(clipboard.availableFormats())
   var thisClipboard = clipboard.readText()
   if(thisClipboard != lastClipboard){
     console.log(thisClipboard)
